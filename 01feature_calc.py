@@ -8,7 +8,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.applications.vgg16 import VGG16
 from imageH import ImageH
 
-dst_basefold = "tbs500_nomatch"
+dst_basefold = "tbs20"
 src_path = os.path.join("data", dst_basefold)
 dst_path = os.path.join("saves", dst_basefold, "features_vgg.hdf5")
 dst_path_color = os.path.join("saves", dst_basefold, "features_color.hdf5")
