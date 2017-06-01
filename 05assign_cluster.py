@@ -61,7 +61,7 @@ f.close()
 gclabels_test = np.ones(classes_test.shape[0], dtype=np.int32) * (-1)
 
 
-random.shuffle(class_names)
+#random.shuffle(class_names)
 for cat in class_names:
     print(cat)
     inds = [i for i, c in enumerate(classes) if c == cat]

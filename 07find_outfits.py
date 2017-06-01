@@ -56,17 +56,23 @@ for ind in inds:
     smrow = style_matrix[gcl_test, :]
     pairing_rank = np.argsort(smrow)[::-1].tolist()
     pairing_rank = [x for x in pairing_rank if smrow[x] > 0]
-    if len(pairing_rank) > 0:
-        candidates = [i for i, x in enumerate(gclabels_test) if x == pairing_rank[0]]
-        if len(candidates) > 0:
-            fig1 = plt.figure(1)
+    if len(pairing_rank) >= 3:
+        fig1 = plt.figure(1)
+        plt.subplot(3, 3, 1)
+        plt.imshow(pil_image.open(jpgs_test[ind]))
+        c1 = -1
+        i = 4
+        for c in range(3):
+            candidates = []
+            while len(candidates) == 0:
+                c1 += 1
+                candidates = [i for i, x in enumerate(gclabels_test) if x == pairing_rank[c1]]
             #fig1.canvas.set_window_title('cluster ' + str(cl))
-            plt.subplot(3, 3, 1)
-            plt.imshow(pil_image.open(jpgs_test[ind]))
-            for i, ngind in enumerate(candidates[:min(8, len(candidates))]):
-                plt.subplot(3, 3, i + 2)
+            for _, ngind in enumerate(candidates[:min(2, len(candidates))]):
+                plt.subplot(3, 3, i)
+                i += 1
                 plt.imshow(pil_image.open(jpgs_test[ngind]))
-            plt.show()
+        plt.show()
 
 
 

@@ -39,7 +39,7 @@ for ind in range(len(assoc)):
             pairinfo = dsinfo[pairid]
             gcl2 = gclabels[pairinfo["index"]]
             style_matrix[gcl, gcl2] += 1
-            #style_matrix[gcl2, gcl] += 1
+            style_matrix[gcl2, gcl] += 1
 
 stylematrix_path = os.path.join("saves", dst_basefold, "stylematrix.hdf5")
 f = h5py.File(stylematrix_path, "w")

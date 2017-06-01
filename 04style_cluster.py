@@ -17,6 +17,7 @@ from sklearn.cluster import Birch
 from sklearn.cluster import AffinityPropagation
 from sklearn.cluster import SpectralClustering
 from sklearn.cluster import spectral_clustering
+from sklearn.metrics.pairwise import pairwise_distances
 
 dst_basefold = "tbs500_nomatch"
 src_path = os.path.join("data", dst_basefold)
@@ -47,7 +48,7 @@ with open(dsinfo_path, 'rb') as handle:
 cat_labels = [f for f in os.listdir(src_path) if os.path.isdir(os.path.join(src_path, f))]
 
 class_nums = [i for i in range(len(class_names))]
-random.shuffle(class_nums)
+
 features_orig = np.copy(features)
 jpgs_orig = jpgs.copy()
 
@@ -55,6 +56,8 @@ jpgs_orig = jpgs.copy()
 gccount = 0
 cluster_dict = []
 gclabels = np.ones(classes.shape[0], dtype=np.int32) * (-1)
+
+random.shuffle(class_nums)
 
 for cat in class_nums:
     # eps = 5
@@ -80,14 +83,13 @@ for cat in class_nums:
     #db = AgglomerativeClustering(n_clusters=15, affinity = weighted_cos_dist, linkage = 'average')
     #db = Birch()
     #db = MeanShift(bandwidth=9)
-    db = SpectralClustering(n_clusters=int(ncluster_by_cat[cat] * 0.75), affinity='precomputed')
-    db = db.fit(1.0 - distmat[inds][:, inds])
-    
-    #MENO DISTMAT???? CI VA AFFINITY
-    #labels = spectral_clustering(distmat, n_clusters=ncluster_by_cat[cat])
+    # db = SpectralClustering(n_clusters=int(ncluster_by_cat[cat] * 0.5), affinity='precomputed')
+    # db = db.fit(1.0 - distmat[inds][:, inds])
+    # labels = db.labels_
+    labels = spectral_clustering((1.0 - distmat[inds][:, inds]).astype(np.float), n_clusters=int(ncluster_by_cat[cat] * 0.5))
     tt = time.time() - st
     print("Time elapsed ", tt)
-    labels = db.labels_
+    
     # Number of clusters in labels, ignoring noise if present.
     n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
     print("**********************")
@@ -99,7 +101,7 @@ for cat in class_nums:
         cl_indexes = [x for x in range(features.shape[0]) if labels[x] == cl]
         inds_cl = [inds[x] for x in cl_indexes]
         print("cluster ", cl, ":", len(cl_indexes))
-        # random.shuffle(cl_indexes)
+        #random.shuffle(cl_indexes)
         # fig1 = plt.figure(1)
         # fig1.canvas.set_window_title('cluster ' + str(cl)) 
         # for i, ngind in enumerate(cl_indexes[:9]):
@@ -109,14 +111,15 @@ for cat in class_nums:
 
         features2 = features[cl_indexes]
         jpgs2 = [jpgs[i] for i in cl_indexes]
-        features_col_ncl = features_col[inds_cl]
+        features_col_ncl = features_col[inds][cl_indexes]
         #db2 = AgglomerativeClustering(n_clusters=min([]), affinity = 'euclidean', linkage = 'average')
-        db2 = MeanShift(bandwidth=0.4)
+        db2 = MeanShift()#bandwidth=0.3)
         #db2 = DBSCAN(eps=0.4, min_samples=3)
-        #db2 = AffinityPropagation(damping=0.5)
+        # db2 = AffinityPropagation(damping=0.5, affinity='precomputed')
         #db2 = Birch(n_)
         #db2 = MiniBatchKMeans(n_clusters=5)
         db2.fit(features_col_ncl)
+        # db2.fit(pairwise_distances(features_col_ncl[:], metric="cosine"))
         labels2 = db2.labels_
         n_clusters_2 = len(set(labels2)) - (1 if -1 in labels2 else 0)
         print("n clusters2: ", n_clusters_2)
