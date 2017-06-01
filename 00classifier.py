@@ -4,7 +4,7 @@ import h5py
 import numpy as np
 from scipy import misc
 
-dst_basefold = "tbs500_nomatch"
+dst_basefold = "tbs400_test"
 src_path = os.path.join("data", dst_basefold)
 if not os.path.isdir(os.path.join("saves", dst_basefold)):
     os.mkdir(os.path.join("saves", dst_basefold))

@@ -47,7 +47,7 @@ with open(dsinfo_path, 'rb') as handle:
 cat_labels = [f for f in os.listdir(src_path) if os.path.isdir(os.path.join(src_path, f))]
 
 class_nums = [i for i in range(len(class_names))]
-#random.shuffle(class_nums)
+random.shuffle(class_nums)
 features_orig = np.copy(features)
 jpgs_orig = jpgs.copy()
 
@@ -80,7 +80,7 @@ for cat in class_nums:
     #db = AgglomerativeClustering(n_clusters=15, affinity = weighted_cos_dist, linkage = 'average')
     #db = Birch()
     #db = MeanShift(bandwidth=9)
-    db = SpectralClustering(n_clusters=ncluster_by_cat[cat], affinity='precomputed')
+    db = SpectralClustering(n_clusters=int(ncluster_by_cat[cat] * 0.75), affinity='precomputed')
     db = db.fit(1.0 - distmat[inds][:, inds])
     
     #MENO DISTMAT???? CI VA AFFINITY
@@ -99,7 +99,7 @@ for cat in class_nums:
         cl_indexes = [x for x in range(features.shape[0]) if labels[x] == cl]
         inds_cl = [inds[x] for x in cl_indexes]
         print("cluster ", cl, ":", len(cl_indexes))
-        #random.shuffle(cl_indexes)
+        # random.shuffle(cl_indexes)
         # fig1 = plt.figure(1)
         # fig1.canvas.set_window_title('cluster ' + str(cl)) 
         # for i, ngind in enumerate(cl_indexes[:9]):
